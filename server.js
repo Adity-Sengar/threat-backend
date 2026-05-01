@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 
@@ -8,10 +9,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ MongoDB Connection
-mongoose.connect("mongodb+srv://admin:06072005@cluster0.fbqzvkq.mongodb.net/threatDB")
+// ✅ MongoDB Connection (from .env)
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("✅ MongoDB connected"))
 .catch(err => console.log("❌ DB Error:", err));
+
+// Optional connection log
+mongoose.connection.on('connected', () => {
+    console.log("MongoDB connection established");
+});
 
 // ✅ Schema
 const ThreatSchema = new mongoose.Schema({
@@ -21,10 +27,10 @@ const ThreatSchema = new mongoose.Schema({
     time: String
 });
 
-// ✅ Model
-const Threat = mongoose.model('Threat', ThreatSchema);
+// ✅ Model (prevents overwrite error in deployment)
+const Threat = mongoose.models.Threat || mongoose.model('Threat', ThreatSchema);
 
-// 🚨 POST API (AWS Lambda yahan hit karega)
+// 🚨 POST API
 app.post('/threat', async (req, res) => {
     try {
         const threat = new Threat(req.body);
@@ -39,7 +45,7 @@ app.post('/threat', async (req, res) => {
     }
 });
 
-// 📊 GET API (data check karne ke liye)
+// 📊 GET API
 app.get('/threats', async (req, res) => {
     try {
         const data = await Threat.find();
@@ -49,7 +55,7 @@ app.get('/threats', async (req, res) => {
     }
 });
 
-// 🏠 Test route (optional but useful)
+// 🏠 Test route
 app.get('/', (req, res) => {
     res.send("🚀 Threat Detection Backend Running");
 });
