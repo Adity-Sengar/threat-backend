@@ -90,25 +90,7 @@ docker run -p 3001:3000 --env-file .env threat-backend
 
 ---
 
-## 📸 Project Screenshots
 
-### AWS Scheduler
-
-![Scheduler](./screenshots/scheduler.png)
-
-### AWS Lambda Execution
-
-![Lambda](./screenshots/lambda.png)
-
-### Backend API Output
-
-![API](./screenshots/api-output.png)
-
-### MongoDB Data
-
-![MongoDB](./screenshots/mongodb.png)
-
----
 
 ## 🔐 Environment Variables
 
